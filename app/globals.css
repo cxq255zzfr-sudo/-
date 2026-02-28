@@ -400,4 +400,35 @@ export default async function HomePage() {
       </footer>
     </>
   );
+}.social-links--header a,
+.social-links--footer a {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-links svg {
+  width: 20px;
+  height: 20px;
+}
+
+.social-links--header a {
+  background: rgba(255, 255, 255, 0.13);
+  color: white;
+  border: 1px solid rgba(212, 194, 154, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+.social-links--footer a {
+  background: rgba(15, 95, 93, 0.08);
+  color: var(--primary);
+  border: 1px solid rgba(212, 194, 154, 0.24);
+}
+
+.social-links a:hover {
+  transform: translateY(-2px) scale(1.03);
 }
