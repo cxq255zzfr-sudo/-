@@ -41,7 +41,6 @@ export default async function HomePage() {
         <section className="hero">
           <div className="hero-card">
             <div className="hero-copy">
-              <span className="section-kicker">شبكة أخبار سوريا الحرة</span>
               <h2>{featured?.title ?? 'آخر الأخبار والتغطيات الموثوقة'}</h2>
 
               {featured?.excerpt ? (

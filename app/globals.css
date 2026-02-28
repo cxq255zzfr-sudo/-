@@ -1,278 +1,119 @@
-:root {
-  --bg-main: #07171c;
-  --bg-soft: #0c2229;
-  --panel: rgba(255, 255, 255, 0.05);
-  --panel-strong: rgba(18, 52, 66, 0.92);
-  --border-soft: rgba(214, 182, 104, 0.18);
-  --text-main: #f7f2e7;
-  --text-soft: #ddd4c2;
-  --gold: #d8b868;
-  --gold-deep: #b8903c;
-}
+import { ArticleCard } from '@/components/article-card';
+import { SiteHeader } from '@/components/site-header';
+import { getPublishedArticles } from '@/lib/data';
 
-html {
-  scroll-behavior: smooth;
-}
+export const revalidate = 0;
 
-body {
-  margin: 0;
-  color: var(--text-main);
-  background:
-    radial-gradient(circle at top right, rgba(214, 182, 104, 0.08), transparent 25%),
-    radial-gradient(circle at top left, rgba(37, 94, 103, 0.28), transparent 35%),
-    linear-gradient(180deg, #07171c 0%, #0b232b 50%, #081b21 100%);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
+function isValidArticle(article: any) {
+  if (!article) return false;
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  const title = typeof article.title === 'string' ? article.title.trim() : '';
+  const slug = typeof article.slug === 'string' ? article.slug.trim() : '';
+  const excerpt = typeof article.excerpt === 'string' ? article.excerpt.trim() : '';
 
-.container {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-}
+  if (!title || !slug) return false;
 
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  backdrop-filter: blur(10px);
-  background: rgba(7, 20, 25, 0.82);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
+  const badText = `${title} ${excerpt}`.toLowerCase();
 
-.header-inner {
-  min-height: 96px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.brand-logo {
-  border-radius: 50%;
-}
-
-.brand-text h1 {
-  margin: 0;
-  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-  color: var(--gold);
-  font-weight: 800;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav a {
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  transition: 0.2s ease;
-}
-
-.nav a:hover {
-  background: rgba(255, 255, 255, 0.09);
-}
-
-.hero {
-  padding: 34px 0 18px;
-}
-
-.hero-card {
-  border-radius: 28px;
-  padding: 38px;
-  background:
-    linear-gradient(135deg, rgba(10, 48, 58, 0.96), rgba(9, 32, 39, 0.96)),
-    linear-gradient(135deg, rgba(216, 184, 104, 0.06), transparent);
-  border: 1px solid var(--border-soft);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-}
-
-.section-kicker {
-  display: inline-block;
-  margin-bottom: 12px;
-  color: var(--gold);
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-.hero-card h2 {
-  margin: 0 0 14px;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.35;
-  color: var(--gold);
-}
-
-.hero-card p {
-  margin: 0;
-  max-width: 860px;
-  color: var(--text-soft);
-  line-height: 1.95;
-  font-size: 1.02rem;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-}
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #e1c57f, #c9a550);
-  color: #111;
-  font-weight: 800;
-  border: 0;
-}
-
-.button.secondary {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.section {
-  padding: 18px 0 34px;
-}
-
-.section-head {
-  margin-bottom: 18px;
-}
-
-.section-head h2 {
-  margin: 0;
-  font-size: 2rem;
-  color: var(--text-main);
-}
-
-.platforms-section {
-  padding-top: 8px;
-}
-
-.platform-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.platform-links a {
-  padding: 12px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-soft);
-  transition: 0.2s ease;
-}
-
-.platform-links a:hover {
-  border-color: rgba(216, 184, 104, 0.35);
-  color: var(--gold);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
-}
-
-.card {
-  overflow: hidden;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(7px);
-}
-
-.card-image {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-  display: block;
-  background: linear-gradient(135deg, rgba(31, 90, 102, 0.58), rgba(12, 34, 41, 0.88));
-}
-
-.card-body {
-  padding: 18px;
-}
-
-.badge {
-  display: inline-block;
-  margin-bottom: 12px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(216, 184, 104, 0.12);
-  color: var(--gold);
-  font-size: 0.88rem;
-}
-
-.card-body h3 {
-  margin: 0 0 10px;
-  line-height: 1.65;
-  font-size: 1.25rem;
-}
-
-.card-body p {
-  margin: 0 0 14px;
-  color: var(--text-soft);
-  line-height: 1.85;
-}
-
-.meta {
-  margin-bottom: 14px;
-  color: #b9b09f;
-  font-size: 0.92rem;
-}
-
-.card-actions {
-  display: flex;
-}
-
-.empty-state {
-  padding: 28px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.empty-state h3 {
-  margin-top: 0;
-  color: var(--gold);
-}
-
-@media (max-width: 820px) {
-  .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 14px 0;
+  if (
+    badText.includes('application error') ||
+    badText.includes('client-side exception') ||
+    badText.includes('server-side exception') ||
+    badText.includes('اسم المستخدم') ||
+    badText.includes('كلمة المرور')
+  ) {
+    return false;
   }
 
-  .nav {
-    width: 100%;
-    flex-wrap: wrap;
-  }
+  return true;
+}
 
-  .hero-card {
-    padding: 24px;
-  }
+export default async function HomePage() {
+  const rawArticles = await getPublishedArticles();
+  const articles = rawArticles.filter(isValidArticle);
+  const featured = articles.find((article) => article.is_featured) ?? articles[0];
 
-  .brand-text h1 {
-    font-size: 1.45rem;
-  }
+  return (
+    <>
+      <SiteHeader />
+
+      <main className="container">
+        <section className="hero">
+          <div className="hero-card">
+            <div className="hero-copy">
+              <h2>{featured?.title ?? 'آخر الأخبار والتغطيات الموثوقة'}</h2>
+
+              {featured?.excerpt ? (
+                <p>{featured.excerpt}</p>
+              ) : (
+                <p>تغطية إخبارية حديثة مع عرض منظم للأخبار المنشورة.</p>
+              )}
+
+              <div className="hero-actions">
+                {featured?.slug ? (
+                  <a className="button" href={`/news/${featured.slug}`}>
+                    قراءة الخبر
+                  </a>
+                ) : null}
+
+                <a className="button secondary" href="#latest">
+                  تصفح آخر الأخبار
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="platforms" className="section platforms-section">
+          <div className="section-head">
+            <h2>منصاتنا الرسمية</h2>
+          </div>
+
+          <div className="platform-links">
+            <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
+              تليجرام
+            </a>
+            <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
+              فيسبوك
+            </a>
+            <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
+              إكس
+            </a>
+            <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
+              يوتيوب
+            </a>
+            <a
+              href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
+              target="_blank"
+              rel="noreferrer"
+            >
+              تيك توك
+            </a>
+            <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
+              واتساب
+            </a>
+          </div>
+        </section>
+
+        <section id="latest" className="section">
+          <div className="section-head">
+            <h2>آخر الأخبار</h2>
+          </div>
+
+          {articles.length > 0 ? (
+            <div className="grid">
+              {articles.map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <h3>لا توجد أخبار منشورة بعد</h3>
+              <p>ستظهر الأخبار هنا تلقائيًا بعد نشرها من لوحة التحكم.</p>
+            </div>
+          )}
+        </section>
+      </main>
+    </>
+  );
 }
