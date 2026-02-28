@@ -32,18 +32,36 @@ export async function getAllArticles(): Promise<Article[]> {
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  if (!hasSupabase()) return demoArticles.find((item) => item.slug === slug) ?? null;
+  const cleanSlug = decodeURIComponent(slug).trim();
+
+  if (!hasSupabase()) {
+    return demoArticles.find((item) => item.slug.trim() === cleanSlug) ?? null;
+  }
 
   const supabase = getSupabase();
-  const { data, error } = await supabase
+
+  const exact = await supabase
     .from(TABLE)
     .select('*')
-    .eq('slug', slug)
+    .eq('slug', cleanSlug)
     .eq('is_published', true)
     .maybeSingle();
 
-  if (error) throw error;
-  return data as Article | null;
+  if (exact.error) throw exact.error;
+  if (exact.data) return exact.data as Article;
+
+  const fallback = await supabase
+    .from(TABLE)
+    .select('*')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false });
+
+  if (fallback.error) throw fallback.error;
+
+  const found =
+    (fallback.data as Article[]).find((item) => item.slug?.trim() === cleanSlug) ?? null;
+
+  return found;
 }
 
 export async function getArticleById(id: string): Promise<Article | null> {
@@ -51,6 +69,7 @@ export async function getArticleById(id: string): Promise<Article | null> {
 
   const supabase = getSupabase();
   const { data, error } = await supabase.from(TABLE).select('*').eq('id', id).maybeSingle();
+
   if (error) throw error;
   return data as Article | null;
 }
