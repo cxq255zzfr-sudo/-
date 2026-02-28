@@ -1,28 +1,49 @@
-import Link from 'next/link';
-import { formatArabicDate } from '@/lib/utils';
-import { Article } from '@/lib/types';
+import Image from 'next/image';
 
-export function ArticleCard({ article }: { article: Article }) {
+export function SiteHeader() {
   return (
-    <article className="newsletter-card fade-in">
-      <div className="newsletter-card__header">
-        <div>
-          <div className="author-row">
-            <h3>{article.category || 'قسم الأخبار'}</h3>
-            <span className="verified-badge">✓</span>
-          </div>
-          <small>@SyriaFreeNews</small>
+    <header className="hero-header">
+      <div className="hero-glow hero-glow--left" />
+      <div className="hero-glow hero-glow--right" />
+
+      <div className="container hero-content">
+        <div className="logo-shell">
+          <Image
+            src="/logo.png"
+            alt="شعار شبكة أخبار سوريا الحرة"
+            width={118}
+            height={118}
+            priority
+          />
         </div>
-        <time>{formatArabicDate(article.created_at)}</time>
-      </div>
 
-      <p>{article.excerpt || article.title}</p>
+        <h1>شبكة أخبار سوريا الحرة</h1>
 
-      <div className="card-link-row">
-        <Link href={`/news/${article.slug}`} className="news-read-link">
-          قراءة الخبر
-        </Link>
+        <div className="social-links social-links--header">
+          <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
+            تليجرام
+          </a>
+          <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
+            فيسبوك
+          </a>
+          <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
+            إكس
+          </a>
+          <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
+            يوتيوب
+          </a>
+          <a
+            href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
+            target="_blank"
+            rel="noreferrer"
+          >
+            تيك توك
+          </a>
+          <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
+            واتساب
+          </a>
+        </div>
       </div>
-    </article>
+    </header>
   );
 }

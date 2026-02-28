@@ -18,7 +18,6 @@ export function SiteHeader() {
         </div>
 
         <h1>شبكة أخبار سوريا الحرة</h1>
-        <p>نشرة إخبارية شاملة تغطي أحدث التطورات والأخبار</p>
 
         <div className="social-links social-links--header">
           <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
