@@ -4,8 +4,33 @@ import { getPublishedArticles } from '@/lib/data';
 
 export const revalidate = 0;
 
+function isValidArticle(article: any) {
+  if (!article) return false;
+
+  const title = typeof article.title === 'string' ? article.title.trim() : '';
+  const excerpt = typeof article.excerpt === 'string' ? article.excerpt.trim() : '';
+  const slug = typeof article.slug === 'string' ? article.slug.trim() : '';
+
+  if (!title || !slug) return false;
+
+  const badText = `${title} ${excerpt}`.toLowerCase();
+
+  if (
+    badText.includes('application error') ||
+    badText.includes('client-side exception') ||
+    badText.includes('server-side exception') ||
+    badText.includes('اسم المستخدم') ||
+    badText.includes('كلمة المرور')
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 export default async function HomePage() {
-  const articles = await getPublishedArticles();
+  const rawArticles = await getPublishedArticles();
+  const articles = rawArticles.filter(isValidArticle);
   const featured = articles.find((article) => article.is_featured) ?? articles[0];
 
   return (
@@ -15,10 +40,10 @@ export default async function HomePage() {
       <main className="container">
         <section className="hero">
           <div className="hero-card">
-            <span className="badge">خبر مميز</span>
             <h2>{featured?.title ?? 'شبكة أخبار سوريا الحرة'}</h2>
             <p>
-              تغطية إخبارية حديثة، واجهة نظيفة، وأخبار منشورة تظهر تلقائيًا من لوحة التحكم.
+              هذه هي الواجهة العامة للموقع. يمكن من خلالها عرض الأخبار المنشورة، بينما تبقى لوحة
+              التحكم مخصصة للإدارة فقط.
             </p>
 
             <div className="hero-actions">
@@ -29,7 +54,7 @@ export default async function HomePage() {
               ) : null}
 
               <a className="button secondary" href="#latest">
-                تصفح آخر الأخبار
+                الانتقال إلى آخر الأخبار
               </a>
             </div>
           </div>
@@ -49,8 +74,8 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="empty-state">
-              <h3>لا توجد أخبار منشورة بعد</h3>
-              <p>بعد إضافة خبر من لوحة التحكم ونشره، سيظهر هنا مباشرة.</p>
+              <h3>لا توجد أخبار صالحة للعرض الآن</h3>
+              <p>أضف خبرًا جديدًا من لوحة التحكم، ثم انشره ليظهر هنا.</p>
             </div>
           )}
         </section>
