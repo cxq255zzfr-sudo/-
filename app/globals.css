@@ -1068,4 +1068,10 @@ button.secondary,
   .admin-login-card {
     padding: 18px;
   }
+}.social-links a svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
+  fill: currentColor;
 }
