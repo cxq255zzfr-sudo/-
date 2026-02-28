@@ -15,28 +15,23 @@ export default async function HomePage() {
       <main className="container">
         <section className="hero">
           <div className="hero-card">
+            <span className="badge">خبر مميز</span>
             <h2>{featured?.title ?? 'شبكة أخبار سوريا الحرة'}</h2>
             <p>
-              هذه هي الواجهة العامة للموقع. يمكن من خلالها عرض الأخبار المنشورة، بينما تبقى لوحة
-              التحكم مخصصة للإدارة فقط.
+              تغطية إخبارية حديثة، واجهة نظيفة، وأخبار منشورة تظهر تلقائيًا من لوحة التحكم.
             </p>
 
-            {featured ? (
-              <div className="hero-actions">
+            <div className="hero-actions">
+              {featured?.slug ? (
                 <a className="button" href={`/news/${featured.slug}`}>
                   قراءة الخبر المميز
                 </a>
-                <a className="button secondary" href="#latest">
-                  الانتقال إلى آخر الأخبار
-                </a>
-              </div>
-            ) : (
-              <div className="hero-actions">
-                <a className="button secondary" href="#latest">
-                  عرض الأخبار
-                </a>
-              </div>
-            )}
+              ) : null}
+
+              <a className="button secondary" href="#latest">
+                تصفح آخر الأخبار
+              </a>
+            </div>
           </div>
         </section>
 
