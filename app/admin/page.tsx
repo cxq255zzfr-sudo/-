@@ -93,7 +93,7 @@ export default async function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  <p>{shorten(article.excerpt || article.content, 180)}</p>
+                  <p>{shorten(article.excerpt, 180)}</p>
 
                   <div className="admin-article-actions">
                     <Link href={`/news/${article.slug}`} className="admin-outline-button">
