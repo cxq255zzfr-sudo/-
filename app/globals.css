@@ -58,10 +58,21 @@ img {
   max-width: 100%;
 }
 
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 .container {
   width: min(1100px, calc(100% - 32px));
   margin: 0 auto;
 }
+
+/* =========================
+   Home Header / Hero
+   ========================= */
 
 .hero-header {
   position: relative;
@@ -141,6 +152,10 @@ img {
   opacity: 0.94;
 }
 
+/* =========================
+   Social links
+   ========================= */
+
 .social-links {
   display: flex;
   flex-wrap: wrap;
@@ -185,6 +200,10 @@ img {
   transform: translateY(-2px) scale(1.03);
 }
 
+/* =========================
+   Home sections
+   ========================= */
+
 .section-space {
   padding: 44px 0 70px;
 }
@@ -206,6 +225,10 @@ img {
   border-radius: 999px;
   margin: 12px auto 0;
 }
+
+/* =========================
+   News cards
+   ========================= */
 
 .news-stack {
   display: grid;
@@ -281,6 +304,10 @@ img {
   font-weight: 700;
 }
 
+/* =========================
+   Footer
+   ========================= */
+
 .site-footer {
   background: #eef2ee;
   border-top: 1px solid var(--border);
@@ -305,6 +332,10 @@ img {
   margin-bottom: 18px;
 }
 
+/* =========================
+   Animations
+   ========================= */
+
 .fade-in {
   animation: fadeInUp 0.45s ease both;
 }
@@ -319,6 +350,162 @@ img {
     transform: translateY(0);
   }
 }
+
+/* =========================
+   Admin login page
+   ========================= */
+
+.admin-login-page {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at top right, rgba(212, 194, 154, 0.08), transparent 25%),
+    radial-gradient(circle at top left, rgba(37, 94, 103, 0.18), transparent 35%),
+    linear-gradient(180deg, #07171c 0%, #0b232b 50%, #081b21 100%);
+}
+
+.admin-login-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 999px;
+  background: rgba(212, 194, 154, 0.1);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.admin-login-glow--left {
+  top: -40px;
+  left: -40px;
+}
+
+.admin-login-glow--right {
+  bottom: -40px;
+  right: -40px;
+}
+
+.admin-login-card {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 100%);
+  padding: 34px 28px;
+  border-radius: 28px;
+  background: rgba(9, 34, 41, 0.86);
+  border: 1px solid rgba(212, 194, 154, 0.2);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+  color: #f7f2e7;
+  text-align: center;
+}
+
+.admin-login-logo {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 18px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 3px solid rgba(212, 194, 154, 0.85);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.admin-login-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-login-card h1 {
+  margin: 0 0 10px;
+  color: #d8b868;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+}
+
+.admin-login-card p {
+  margin: 0 0 22px;
+  color: #ddd4c2;
+  line-height: 1.8;
+}
+
+.admin-login-error {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(166, 44, 44, 0.16);
+  border: 1px solid rgba(255, 120, 120, 0.18);
+  color: #ffe0e0;
+  text-align: right;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 16px;
+  text-align: right;
+}
+
+.admin-login-form label {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-login-form span {
+  color: #f0e8d8;
+  font-size: 1rem;
+}
+
+.admin-login-form input {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 18px;
+  border: 1px solid rgba(212, 194, 154, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  padding: 0 16px;
+  outline: none;
+  font-size: 1rem;
+}
+
+.admin-login-form input:focus {
+  border-color: rgba(216, 184, 104, 0.55);
+  box-shadow: 0 0 0 3px rgba(216, 184, 104, 0.12);
+}
+
+.admin-login-form button {
+  margin-top: 6px;
+  min-height: 56px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #e1c57f, #c9a550);
+  color: #111;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-login-footer {
+  margin-top: 18px;
+}
+
+.admin-login-footer a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #f7f2e7;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 800px) {
   .hero-header {
