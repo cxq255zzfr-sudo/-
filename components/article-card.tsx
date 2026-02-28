@@ -2,24 +2,21 @@ import Link from 'next/link';
 import { formatArabicDate } from '@/lib/utils';
 import { Article } from '@/lib/types';
 
-function isValidImageUrl(url?: string | null) {
+function hasValidImage(url?: string | null) {
   return typeof url === 'string' && url.trim().length > 0;
 }
 
 export function ArticleCard({ article }: { article: Article }) {
-  const hasImage = isValidImageUrl(article.image_url);
+  const showImage = hasValidImage(article.image_url);
 
   return (
     <article className="card">
-      {hasImage ? (
+      {showImage ? (
         <img
-          src={article.image_url!}
+          src={article.image_url as string}
           alt={article.title}
           className="card-image"
           loading="lazy"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = 'none';
-          }}
         />
       ) : (
         <div className="card-image" />
