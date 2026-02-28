@@ -1,5 +1,6 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getSupabase } from '@/lib/supabase';
@@ -13,43 +14,31 @@ function toSlug(text: string) {
     .replace(/-+/g, '-');
 }
 
-export async function createArticleAction(formData: FormData) {
-  const title = String(formData.get('title') || '').trim();
-  const slugInput = String(formData.get('slug') || '').trim();
-  const excerpt = String(formData.get('excerpt') || '').trim();
-  const category = String(formData.get('category') || '').trim();
-  const image_url = String(formData.get('image_url') || '').trim();
-  const is_published = formData.get('is_published') === 'on';
-  const is_featured = formData.get('is_featured') === 'on';
+export async function loginAction(formData: FormData) {
+  const username = String(formData.get('username') || '').trim();
+  const password = String(formData.get('password') || '').trim();
 
-  if (!title) {
-    throw new Error('العنوان مطلوب');
+  const adminUser = String(process.env.ADMIN_USER || '').trim();
+  const adminPass = String(process.env.ADMIN_PASS || '').trim();
+
+  if (!adminUser || !adminPass) {
+    redirect('/admin/login?error=1');
   }
 
-  const slug = slugInput || toSlug(title);
-
-  if (!slug) {
-    throw new Error('تعذر إنشاء الرابط المختصر');
+  if (username !== adminUser || password !== adminPass) {
+    redirect('/admin/login?error=1');
   }
 
-  const supabase = getSupabase();
+  const cookieStore = await cookies();
 
-  const { error } = await supabase.from('articles').insert({
-    title,
-    slug,
-    excerpt,
-    category: category || 'عام',
-    image_url: image_url || null,
-    is_published,
-    is_featured
+  cookieStore.set('admin_session', 'authenticated', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30
   });
 
-  if (error) {
-    throw error;
-  }
-
-  revalidatePath('/');
-  revalidatePath('/admin');
   redirect('/admin');
 }
 
