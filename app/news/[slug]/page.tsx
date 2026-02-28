@@ -16,7 +16,7 @@ export default async function NewsArticlePage({
   }
 
   return (
-    <main className="container">
+    <main className="container" style={{ padding: '40px 0 60px' }}>
       <article className="article-page">
         <Link href="/" className="news-read-link">
           العودة إلى الرئيسية
@@ -29,11 +29,7 @@ export default async function NewsArticlePage({
         </div>
 
         {article.image_url ? (
-          <img
-            src={article.image_url}
-            alt={article.title}
-            className="cover"
-          />
+          <img src={article.image_url} alt={article.title} className="cover" />
         ) : null}
 
         <div className="article-content">
