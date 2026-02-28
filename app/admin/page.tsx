@@ -1,109 +1,104 @@
 import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth';
 import { getAllArticles } from '@/lib/data';
+import { hasSupabase } from '@/lib/supabase';
+import { createArticleAction, deleteArticleAction, logoutAction, togglePublishAction } from './actions';
+import { formatArabicDate } from '@/lib/utils';
 
-function safeCount(items: any[], fn: (item: any) => boolean) {
-  return items.filter(fn).length;
-}
+export const revalidate = 0;
 
-function shorten(text?: string | null, max = 140) {
-  if (!text) return '—';
-  return text.length > max ? `${text.slice(0, max)}...` : text;
-}
-
-export default async function AdminDashboardPage() {
+export default async function AdminPage({
+  searchParams
+}: {
+  searchParams: Promise<{ success?: string; error?: string; notice?: string }>;
+}) {
+  await requireAdmin();
+  const params = await searchParams;
   const articles = await getAllArticles();
 
-  const publishedCount = safeCount(articles, (item) => item?.is_published);
-  const draftCount = safeCount(articles, (item) => !item?.is_published);
-  const featuredCount = safeCount(articles, (item) => item?.is_featured);
-
   return (
-    <main className="admin-shell">
-      <div className="container">
-        <header className="admin-topbar">
-          <div>
-            <h1>لوحة التحكم</h1>
-            <p>من هنا يمكنك متابعة الأخبار الحالية وإدارة المحتوى المنشور.</p>
+    <main className="container admin-shell">
+      <aside className="panel">
+        <div className="row-between">
+          <h2>إدارة الأخبار</h2>
+          <div className="row">
+            <Link href="/admin/articles/new" className="button secondary">إضافة خبر</Link>
+            <form action={logoutAction}><button type="submit" className="secondary">خروج</button></form>
           </div>
-
-          <div className="admin-topbar-actions">
-            <Link href="/admin/articles/new" className="admin-link-btn primary">
-              إضافة خبر
-            </Link>
-
-            <Link href="/" className="admin-link-btn">
-              عرض الموقع
-            </Link>
+        </div>
+        <p className="note">من هنا تبدأ النسخة الأولية الحقيقية: إضافة خبر، تعديل، حذف، ونشر.</p>
+        {!hasSupabase() ? (
+          <div className="setup-note" style={{ marginTop: 0 }}>
+            اللوحة تحتاج ربط Supabase حتى تعمل الحفظ الحقيقي. إلى أن يتم ذلك، سترى بيانات تجريبية فقط.
           </div>
-        </header>
+        ) : null}
+        {params.success ? <div className="success">تم تنفيذ العملية بنجاح.</div> : null}
+        {params.notice ? <div className="error">أكمل إعداد Supabase أولًا.</div> : null}
+        {params.error ? <div className="error">{decodeURIComponent(params.error)}</div> : null}
+        <form action={createArticleAction} className="form-grid" style={{ marginTop: 16 }}>
+          <label>
+            عنوان الخبر
+            <input name="title" required />
+          </label>
+          <label>
+            ملخص قصير
+            <textarea name="excerpt" required />
+          </label>
+          <label>
+            نص الخبر
+            <textarea name="body" required style={{ minHeight: 220 }} />
+          </label>
+          <label>
+            التصنيف
+            <select name="category" defaultValue="محلي">
+              <option>محلي</option>
+              <option>سياسي</option>
+              <option>أمني</option>
+              <option>اقتصاد</option>
+              <option>منوع</option>
+              <option>تقني</option>
+            </select>
+          </label>
+          <label>
+            صورة الخبر
+            <input type="file" name="image" accept="image/*" />
+          </label>
+          <label><input type="checkbox" name="is_featured" /> خبر مميز</label>
+          <label><input type="checkbox" name="is_published" defaultChecked /> منشور</label>
+          <button type="submit">إضافة خبر</button>
+        </form>
+      </aside>
 
-        <section className="admin-grid">
-          <div className="admin-split">
-            <article className="admin-card">
-              <h3>إجمالي الأخبار</h3>
-              <p className="admin-muted">{articles.length}</p>
-            </article>
-
-            <article className="admin-card">
-              <h3>الأخبار المنشورة</h3>
-              <p className="admin-muted">{publishedCount}</p>
-            </article>
-
-            <article className="admin-card">
-              <h3>المسودات</h3>
-              <p className="admin-muted">{draftCount}</p>
-            </article>
-
-            <article className="admin-card">
-              <h3>الأخبار المميزة</h3>
-              <p className="admin-muted">{featuredCount}</p>
-            </article>
-          </div>
-
-          <article className="admin-card">
-            <h2>آخر الأخبار</h2>
-            <p>قائمة الأخبار الحالية داخل النظام</p>
-
-            {articles.length > 0 ? (
-              <div className="admin-grid">
-                {articles.map((article) => (
-                  <article key={article.id} className="admin-card">
-                    <h3>{article.title || 'بدون عنوان'}</h3>
-
-                    <p className="admin-muted">
-                      {article.category || 'عام'} — {article.slug || 'بدون رابط'}
-                    </p>
-
-                    <div className="admin-actions" style={{ margin: '12px 0' }}>
-                      {article.is_published ? (
-                        <span className="admin-badge">منشور</span>
-                      ) : (
-                        <span className="admin-badge">مسودة</span>
-                      )}
-
-                      {article.is_featured ? (
-                        <span className="admin-badge">مميز</span>
-                      ) : null}
-                    </div>
-
-                    <p>{shorten(article.excerpt, 180)}</p>
-
-                    <div className="admin-actions" style={{ marginTop: '14px' }}>
-                      <Link href={`/news/${article.slug}`} className="admin-link-btn">
-                        عرض
-                      </Link>
-                    </div>
-                  </article>
-                ))}
+      <section className="panel">
+        <div className="row-between">
+          <h3>الأخبار الحالية</h3>
+          <Link href="/" className="button secondary">مشاهدة الموقع</Link>
+        </div>
+        <div className="table-list">
+          {articles.map((article) => (
+            <div key={article.id} className="table-item">
+              <div className="row-between">
+                <strong>{article.title}</strong>
+                <span className="badge">{article.is_published ? 'منشور' : 'مسودة'}</span>
               </div>
-            ) : (
-              <div className="admin-empty">
-                لا توجد أخبار داخل النظام الآن.
+              <div className="note">{article.excerpt}</div>
+              <div className="meta">{article.category} • {formatArabicDate(article.created_at)}</div>
+              <div className="row">
+                <Link className="button secondary" href={`/admin/articles/${article.id}/edit`}>تعديل</Link>
+                <form action={togglePublishAction}>
+                  <input type="hidden" name="id" value={article.id} />
+                  <input type="hidden" name="nextState" value={String(!article.is_published)} />
+                  <button type="submit" className="secondary">{article.is_published ? 'إخفاء' : 'نشر'}</button>
+                </form>
+                <form action={deleteArticleAction}>
+                  <input type="hidden" name="id" value={article.id} />
+                  <button type="submit" className="secondary">حذف</button>
+                </form>
               </div>
-            )}
-          </article>
-        </section>
-      </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

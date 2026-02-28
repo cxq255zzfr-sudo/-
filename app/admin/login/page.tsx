@@ -1,54 +1,31 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { loginAction } from '../actions';
 
 export default async function AdminLoginPage({
   searchParams
 }: {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
-  const hasError = params?.error === '1';
-
   return (
-    <main className="admin-login-page">
-      <div className="admin-login-glow admin-login-glow--left" />
-      <div className="admin-login-glow admin-login-glow--right" />
-
-      <div className="admin-login-card">
-        <div className="admin-login-logo">
-          <Image
-            src="/logo.png"
-            alt="شعار شبكة أخبار سوريا الحرة"
-            width={92}
-            height={92}
-            priority
-          />
-        </div>
-
-        <h1>دخول الإدارة</h1>
-        <p>هذه الصفحة مخصصة لإدارة الموقع فقط.</p>
-
-        {hasError ? (
-          <div className="admin-login-error">بيانات الدخول غير صحيحة.</div>
-        ) : null}
-
-        <form action={loginAction} className="admin-login-form">
+    <main className="container center-box">
+      <div className="panel">
+        <h2>دخول الإدارة</h2>
+        <p className="note">هذه الصفحة خاصة بإدارة الأخبار. أدخل اسم المستخدم وكلمة المرور.</p>
+        {params.error ? <div className="error">بيانات الدخول غير صحيحة.</div> : null}
+        <form action={loginAction} className="form-grid" style={{ marginTop: 16 }}>
           <label>
-            <span>اسم المستخدم</span>
-            <input name="username" type="text" required />
+            اسم المستخدم
+            <input name="username" required />
           </label>
-
           <label>
-            <span>كلمة المرور</span>
-            <input name="password" type="password" required />
+            كلمة المرور
+            <input type="password" name="password" required />
           </label>
-
           <button type="submit">دخول</button>
         </form>
-
-        <div className="admin-login-footer">
-          <Link href="/">العودة للرئيسية</Link>
+        <div style={{ marginTop: 16 }}>
+          <Link href="/" className="button secondary">العودة للرئيسية</Link>
         </div>
       </div>
     </main>
