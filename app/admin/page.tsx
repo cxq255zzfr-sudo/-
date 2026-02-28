@@ -1,101 +1,120 @@
 import Link from 'next/link';
-import { requireAdmin } from '@/lib/auth';
 import { getAllArticles } from '@/lib/data';
-import { hasSupabase } from '@/lib/supabase';
-import { createArticleAction, deleteArticleAction, logoutAction, togglePublishAction } from './actions';
-import { formatArabicDate } from '@/lib/utils';
 
-export const revalidate = 0;
+function safeCount(items: any[], fn: (item: any) => boolean) {
+  return items.filter(fn).length;
+}
 
-export default async function AdminPage({
-  searchParams
-}: {
-  searchParams: Promise<{ success?: string; error?: string; notice?: string }>;
-}) {
-  await requireAdmin();
-  const params = await searchParams;
+function shorten(text?: string | null, max = 140) {
+  if (!text) return '—';
+  return text.length > max ? `${text.slice(0, max)}...` : text;
+}
+
+export default async function AdminDashboardPage() {
   const articles = await getAllArticles();
 
-  return (
-    <main className="container admin-shell">
-      <aside className="panel">
-        <div className="row-between">
-          <h2>إدارة الأخبار</h2>
-          <form action={logoutAction}><button type="submit" className="secondary">خروج</button></form>
-        </div>
-        <p className="note">من هنا تبدأ النسخة الأولية الحقيقية: إضافة خبر، تعديل، حذف، ونشر.</p>
-        {!hasSupabase() ? (
-          <div className="setup-note" style={{ marginTop: 0 }}>
-            اللوحة تحتاج ربط Supabase حتى تعمل الحفظ الحقيقي. إلى أن يتم ذلك، سترى بيانات تجريبية فقط.
-          </div>
-        ) : null}
-        {params.success ? <div className="success">تم تنفيذ العملية بنجاح.</div> : null}
-        {params.notice ? <div className="error">أكمل إعداد Supabase أولًا.</div> : null}
-        {params.error ? <div className="error">{decodeURIComponent(params.error)}</div> : null}
-        <form action={createArticleAction} className="form-grid" style={{ marginTop: 16 }}>
-          <label>
-            عنوان الخبر
-            <input name="title" required />
-          </label>
-          <label>
-            ملخص قصير
-            <textarea name="excerpt" required />
-          </label>
-          <label>
-            نص الخبر
-            <textarea name="body" required style={{ minHeight: 220 }} />
-          </label>
-          <label>
-            التصنيف
-            <select name="category" defaultValue="محلي">
-              <option>محلي</option>
-              <option>سياسي</option>
-              <option>أمني</option>
-              <option>اقتصاد</option>
-              <option>منوع</option>
-              <option>تقني</option>
-            </select>
-          </label>
-          <label>
-            صورة الخبر
-            <input type="file" name="image" accept="image/*" />
-          </label>
-          <label><input type="checkbox" name="is_featured" /> خبر مميز</label>
-          <label><input type="checkbox" name="is_published" defaultChecked /> منشور</label>
-          <button type="submit">إضافة خبر</button>
-        </form>
-      </aside>
+  const publishedCount = safeCount(articles, (item) => item?.is_published);
+  const draftCount = safeCount(articles, (item) => !item?.is_published);
+  const featuredCount = safeCount(articles, (item) => item?.is_featured);
 
-      <section className="panel">
-        <div className="row-between">
-          <h3>الأخبار الحالية</h3>
-          <Link href="/" className="button secondary">مشاهدة الموقع</Link>
-        </div>
-        <div className="table-list">
-          {articles.map((article) => (
-            <div key={article.id} className="table-item">
-              <div className="row-between">
-                <strong>{article.title}</strong>
-                <span className="badge">{article.is_published ? 'منشور' : 'مسودة'}</span>
-              </div>
-              <div className="note">{article.excerpt}</div>
-              <div className="meta">{article.category} • {formatArabicDate(article.created_at)}</div>
-              <div className="row">
-                <Link className="button secondary" href={`/admin/articles/${article.id}/edit`}>تعديل</Link>
-                <form action={togglePublishAction}>
-                  <input type="hidden" name="id" value={article.id} />
-                  <input type="hidden" name="nextState" value={String(!article.is_published)} />
-                  <button type="submit" className="secondary">{article.is_published ? 'إخفاء' : 'نشر'}</button>
-                </form>
-                <form action={deleteArticleAction}>
-                  <input type="hidden" name="id" value={article.id} />
-                  <button type="submit" className="secondary">حذف</button>
-                </form>
-              </div>
+  return (
+    <main className="admin-dashboard-page">
+      <div className="admin-dashboard-glow admin-dashboard-glow--left" />
+      <div className="admin-dashboard-glow admin-dashboard-glow--right" />
+
+      <div className="container admin-dashboard-shell">
+        <header className="admin-dashboard-header">
+          <div>
+            <span className="admin-kicker">لوحة التحكم</span>
+            <h1>إدارة شبكة أخبار سوريا الحرة</h1>
+            <p>من هنا يمكنك متابعة الأخبار الحالية وإدارة المحتوى المنشور.</p>
+          </div>
+
+          <div className="admin-dashboard-actions">
+            <Link href="/" className="admin-outline-button">
+              عرض الموقع
+            </Link>
+          </div>
+        </header>
+
+        <section className="admin-stats-grid">
+          <article className="admin-stat-card">
+            <span>إجمالي الأخبار</span>
+            <strong>{articles.length}</strong>
+          </article>
+
+          <article className="admin-stat-card">
+            <span>الأخبار المنشورة</span>
+            <strong>{publishedCount}</strong>
+          </article>
+
+          <article className="admin-stat-card">
+            <span>المسودات</span>
+            <strong>{draftCount}</strong>
+          </article>
+
+          <article className="admin-stat-card">
+            <span>الأخبار المميزة</span>
+            <strong>{featuredCount}</strong>
+          </article>
+        </section>
+
+        <section className="admin-panel">
+          <div className="admin-panel-head">
+            <div>
+              <h2>آخر الأخبار</h2>
+              <p>قائمة الأخبار الحالية داخل النظام</p>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+
+          {articles.length > 0 ? (
+            <div className="admin-articles-list">
+              {articles.map((article) => (
+                <article key={article.id} className="admin-article-card">
+                  <div className="admin-article-top">
+                    <div>
+                      <h3>{article.title || 'بدون عنوان'}</h3>
+                      <div className="admin-article-meta">
+                        <span>{article.category || 'عام'}</span>
+                        <span>{article.slug || 'بدون رابط'}</span>
+                      </div>
+                    </div>
+
+                    <div className="admin-badges">
+                      {article.is_published ? (
+                        <span className="admin-badge admin-badge--published">منشور</span>
+                      ) : (
+                        <span className="admin-badge admin-badge--draft">مسودة</span>
+                      )}
+
+                      {article.is_featured ? (
+                        <span className="admin-badge admin-badge--featured">مميز</span>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <p>{shorten(article.excerpt || article.content, 180)}</p>
+
+                  <div className="admin-article-actions">
+                    <Link href={`/news/${article.slug}`} className="admin-outline-button">
+                      عرض
+                    </Link>
+
+                    <Link href={`/admin/articles/${article.id}/edit`} className="admin-main-button">
+                      تعديل
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="admin-empty-state">
+              <h3>لا توجد أخبار داخل النظام</h3>
+              <p>بعد إضافة أو جلب أخبار جديدة، ستظهر هنا مباشرة.</p>
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   );
 }
