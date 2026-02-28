@@ -52,3 +52,54 @@ export async function createArticleAction(formData: FormData) {
   revalidatePath('/admin');
   redirect('/admin');
 }
+
+export async function updateArticleAction(formData: FormData) {
+  const id = String(formData.get('id') || '').trim();
+  const title = String(formData.get('title') || '').trim();
+  const slugInput = String(formData.get('slug') || '').trim();
+  const excerpt = String(formData.get('excerpt') || '').trim();
+  const category = String(formData.get('category') || '').trim();
+  const image_url = String(formData.get('image_url') || '').trim();
+  const is_published = formData.get('is_published') === 'on';
+  const is_featured = formData.get('is_featured') === 'on';
+
+  if (!id) {
+    throw new Error('معرف الخبر مفقود');
+  }
+
+  if (!title) {
+    throw new Error('العنوان مطلوب');
+  }
+
+  const slug = slugInput || toSlug(title);
+
+  if (!slug) {
+    throw new Error('تعذر إنشاء الرابط المختصر');
+  }
+
+  const supabase = getSupabase();
+
+  const { error } = await supabase
+    .from('articles')
+    .update({
+      title,
+      slug,
+      excerpt,
+      category: category || 'عام',
+      image_url: image_url || null,
+      is_published,
+      is_featured
+    })
+    .eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+
+  revalidatePath('/');
+  revalidatePath('/admin');
+  revalidatePath(`/news/${slug}`);
+  revalidatePath(`/admin/articles/${id}/edit`);
+
+  redirect('/admin?success=updated');
+}
