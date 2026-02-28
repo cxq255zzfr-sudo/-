@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { formatArabicDate } from '@/lib/utils';
 import { Article } from '@/lib/types';
@@ -5,6 +6,23 @@ import { Article } from '@/lib/types';
 export function ArticleCard({ article }: { article: Article }) {
   return (
     <article className="newsletter-card fade-in">
+      {article.image_url ? (
+        <div style={{ marginBottom: '16px' }}>
+          <Image
+            src={article.image_url}
+            alt={article.title}
+            width={1200}
+            height={675}
+            style={{
+              width: '100%',
+              height: 'auto',
+              borderRadius: '16px',
+              objectFit: 'cover'
+            }}
+          />
+        </div>
+      ) : null}
+
       <div className="newsletter-card__header">
         <div>
           <div className="author-row">
