@@ -27,6 +27,10 @@ export default async function AdminDashboardPage() {
           </div>
 
           <div className="admin-topbar-actions">
+            <Link href="/admin/articles/new" className="admin-link-btn primary">
+              إضافة خبر
+            </Link>
+
             <Link href="/" className="admin-link-btn">
               عرض الموقع
             </Link>
@@ -87,10 +91,6 @@ export default async function AdminDashboardPage() {
                     <div className="admin-actions" style={{ marginTop: '14px' }}>
                       <Link href={`/news/${article.slug}`} className="admin-link-btn">
                         عرض
-                      </Link>
-
-                      <Link href={`/admin/articles/${article.id}/edit`} className="admin-link-btn primary">
-                        تعديل
                       </Link>
                     </div>
                   </article>
