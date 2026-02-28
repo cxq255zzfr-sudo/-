@@ -12,14 +12,24 @@
   --radius: 18px;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
+  margin: 0;
+  direction: rtl;
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background:
     linear-gradient(180deg, rgba(244, 246, 243, 0.985), rgba(244, 246, 243, 0.985)),
     radial-gradient(circle at top right, rgba(212, 194, 154, 0.09), transparent 26%),
     radial-gradient(circle at top left, rgba(15, 95, 93, 0.08), transparent 30%),
     linear-gradient(180deg, #f4f6f3 0%, #eef3ef 100%);
-  color: var(--text);
-  direction: rtl;
 }
 
 body::before {
@@ -27,9 +37,25 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(15, 95, 93, 0.05) 0%, rgba(15, 95, 93, 0) 22%, rgba(15, 95, 93, 0) 78%, rgba(212, 194, 154, 0.1) 100%);
+    linear-gradient(
+      90deg,
+      rgba(15, 95, 93, 0.06) 0%,
+      rgba(15, 95, 93, 0) 22%,
+      rgba(15, 95, 93, 0) 78%,
+      rgba(212, 194, 154, 0.12) 100%
+    ),
+    radial-gradient(circle at top right, rgba(212, 194, 154, 0.14), transparent 30%);
   pointer-events: none;
   z-index: -1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
 }
 
 .container {
@@ -40,9 +66,10 @@ body::before {
 .hero-header {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(10, 63, 64, 0.96) 0%, rgba(15, 95, 93, 0.92) 58%, rgba(12, 76, 76, 0.9) 100%);
+  background:
+    linear-gradient(135deg, rgba(10, 63, 64, 0.96) 0%, rgba(15, 95, 93, 0.92) 58%, rgba(12, 76, 76, 0.9) 100%);
   color: white;
-  padding: 56px 0 54px;
+  padding: 48px 0 54px;
   border-bottom: 1px solid rgba(212, 194, 154, 0.28);
 }
 
@@ -124,10 +151,21 @@ body::before {
 .social-links a {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 11px 16px;
-  border-radius: 999px;
+  justify-content: center;
   transition: 0.2s ease;
+}
+
+.social-links--header a,
+.social-links--footer a {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.social-links svg {
+  width: 20px;
+  height: 20px;
 }
 
 .social-links--header a {
@@ -144,27 +182,11 @@ body::before {
 }
 
 .social-links a:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.03);
 }
 
 .section-space {
   padding: 44px 0 70px;
-  position: relative;
-}
-
-.section-space::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.82));
-  opacity: 0.14;
-  pointer-events: none;
-}
-
-.section-space > .container,
-.section-space > * {
-  position: relative;
-  z-index: 1;
 }
 
 .section-title {
@@ -210,8 +232,13 @@ body::before {
   gap: 16px;
 }
 
+.author-row {
+  gap: 8px;
+}
+
 .newsletter-card h3 {
   margin: 0;
+  line-height: 1.5;
 }
 
 .newsletter-card small,
@@ -226,14 +253,10 @@ body::before {
   white-space: pre-wrap;
 }
 
-.author-row {
-  gap: 8px;
-}
-
 .verified-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
   background: rgba(45, 122, 62, 0.12);
   color: var(--primary-dark);
   padding: 5px 10px;
@@ -277,6 +300,11 @@ body::before {
   padding-bottom: 22px;
 }
 
+.footer-social-box h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
 .fade-in {
   animation: fadeInUp 0.45s ease both;
 }
@@ -293,142 +321,24 @@ body::before {
 }
 
 @media (max-width: 800px) {
+  .hero-header {
+    padding-top: 56px;
+  }
+
   .newsletter-card__header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .hero-header {
-    padding-top: 56px;
-  }
-}import { ArticleCard } from '@/components/article-card';
-import { SiteHeader } from '@/components/site-header';
-import { getPublishedArticles } from '@/lib/data';
-
-export const revalidate = 0;
-
-function isValidArticle(article: any) {
-  if (!article) return false;
-
-  const title = typeof article.title === 'string' ? article.title.trim() : '';
-  const slug = typeof article.slug === 'string' ? article.slug.trim() : '';
-  const excerpt = typeof article.excerpt === 'string' ? article.excerpt.trim() : '';
-
-  if (!title || !slug) return false;
-
-  const badText = `${title} ${excerpt}`.toLowerCase();
-
-  if (
-    badText.includes('application error') ||
-    badText.includes('client-side exception') ||
-    badText.includes('server-side exception') ||
-    badText.includes('اسم المستخدم') ||
-    badText.includes('كلمة المرور')
-  ) {
-    return false;
+  .hero-content h1 {
+    font-size: 2.2rem;
   }
 
-  return true;
-}
+  .hero-content p {
+    font-size: 0.98rem;
+  }
 
-export default async function HomePage() {
-  const rawArticles = await getPublishedArticles();
-  const articles = rawArticles.filter(isValidArticle);
-
-  return (
-    <>
-      <SiteHeader />
-
-      <main className="container section-space">
-        <div id="latest" className="section-title">
-          <h2>آخر الأخبار</h2>
-          <div className="section-line" />
-        </div>
-
-        <div className="news-stack">
-          {articles.length > 0 ? (
-            articles.map((article) => <ArticleCard key={article.id} article={article} />)
-          ) : (
-            <article className="newsletter-card fade-in">
-              <div className="newsletter-card__header">
-                <div>
-                  <div className="author-row">
-                    <h3>إدارة التحرير</h3>
-                    <span className="verified-badge">✓</span>
-                  </div>
-                  <small>@SyriaFreeNews</small>
-                </div>
-                <time>الآن</time>
-              </div>
-              <p>لا توجد أخبار منشورة بعد. ستظهر الأخبار هنا تلقائيًا بعد النشر من لوحة التحكم.</p>
-            </article>
-          )}
-        </div>
-      </main>
-
-      <footer id="platforms" className="site-footer">
-        <div className="container footer-inner">
-          <div className="footer-social-box">
-            <h3>⭐ لمتابعتنا عبر حساباتنا الرسمية على مواقع التواصل الاجتماعي</h3>
-            <div className="social-links social-links--footer">
-              <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
-                <span>تليجرام</span>
-              </a>
-              <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
-                <span>فيسبوك</span>
-              </a>
-              <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
-                <span>إكس</span>
-              </a>
-              <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
-                <span>يوتيوب</span>
-              </a>
-              <a
-                href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span>تيك توك</span>
-              </a>
-              <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
-                <span>واتساب</span>
-              </a>
-            </div>
-          </div>
-          <p>© 2026 شبكة أخبار سوريا الحرة. جميع الحقوق محفوظة.</p>
-        </div>
-      </footer>
-    </>
-  );
-}.social-links--header a,
-.social-links--footer a {
-  width: 46px;
-  height: 46px;
-  padding: 0;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.social-links svg {
-  width: 20px;
-  height: 20px;
-}
-
-.social-links--header a {
-  background: rgba(255, 255, 255, 0.13);
-  color: white;
-  border: 1px solid rgba(212, 194, 154, 0.28);
-  backdrop-filter: blur(6px);
-}
-
-.social-links--footer a {
-  background: rgba(15, 95, 93, 0.08);
-  color: var(--primary);
-  border: 1px solid rgba(212, 194, 154, 0.24);
-}
-
-.social-links a:hover {
-  transform: translateY(-2px) scale(1.03);
+  .social-links {
+    gap: 10px;
+  }
 }
