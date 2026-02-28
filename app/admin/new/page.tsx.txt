@@ -1,0 +1,72 @@
+import Link from 'next/link';
+import { createArticleAction } from '../actions';
+
+export default function NewArticlePage() {
+  return (
+    <main className="admin-shell">
+      <div className="container">
+        <header className="admin-topbar">
+          <div>
+            <h1>إضافة خبر جديد</h1>
+            <p>أدخل بيانات الخبر ثم احفظه ليظهر داخل النظام.</p>
+          </div>
+
+          <div className="admin-topbar-actions">
+            <Link href="/admin" className="admin-link-btn">
+              العودة للوحة التحكم
+            </Link>
+          </div>
+        </header>
+
+        <article className="admin-card">
+          <form action={createArticleAction} className="admin-form">
+            <label>
+              <span>عنوان الخبر</span>
+              <input name="title" type="text" required />
+            </label>
+
+            <label>
+              <span>الرابط المختصر (slug)</span>
+              <input name="slug" type="text" placeholder="يُترك فارغًا ليُنشأ تلقائيًا" />
+            </label>
+
+            <label>
+              <span>المقتطف</span>
+              <textarea name="excerpt" rows={6} />
+            </label>
+
+            <label>
+              <span>التصنيف</span>
+              <input name="category" type="text" placeholder="عام" />
+            </label>
+
+            <label>
+              <span>رابط الصورة</span>
+              <input name="image_url" type="text" placeholder="https://..." />
+            </label>
+
+            <label style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input name="is_published" type="checkbox" defaultChecked />
+              <span>نشر الخبر مباشرة</span>
+            </label>
+
+            <label style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input name="is_featured" type="checkbox" />
+              <span>تعيين كخبر مميز</span>
+            </label>
+
+            <div className="admin-actions">
+              <button type="submit" className="admin-btn primary">
+                حفظ الخبر
+              </button>
+
+              <Link href="/admin" className="admin-link-btn">
+                إلغاء
+              </Link>
+            </div>
+          </form>
+        </article>
+      </div>
+    </main>
+  );
+}
