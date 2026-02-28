@@ -31,89 +31,70 @@ function isValidArticle(article: any) {
 export default async function HomePage() {
   const rawArticles = await getPublishedArticles();
   const articles = rawArticles.filter(isValidArticle);
-  const featured = articles.find((article) => article.is_featured) ?? articles[0];
 
   return (
     <>
       <SiteHeader />
 
-      <main className="container">
-        <section className="hero">
-          <div className="hero-card">
-            <div className="hero-copy">
-              <h2>{featured?.title ?? 'آخر الأخبار والتغطيات الموثوقة'}</h2>
+      <main className="container section-space">
+        <div id="latest" className="section-title">
+          <h2>آخر الأخبار</h2>
+          <div className="section-line" />
+        </div>
 
-              {featured?.excerpt ? (
-                <p>{featured.excerpt}</p>
-              ) : (
-                <p>تغطية إخبارية حديثة مع عرض منظم للأخبار المنشورة.</p>
-              )}
-
-              <div className="hero-actions">
-                {featured?.slug ? (
-                  <a className="button" href={`/news/${featured.slug}`}>
-                    قراءة الخبر
-                  </a>
-                ) : null}
-
-                <a className="button secondary" href="#latest">
-                  تصفح آخر الأخبار
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="platforms" className="section platforms-section">
-          <div className="section-head">
-            <h2>منصاتنا الرسمية</h2>
-          </div>
-
-          <div className="platform-links">
-            <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
-              تليجرام
-            </a>
-            <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
-              فيسبوك
-            </a>
-            <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
-              إكس
-            </a>
-            <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
-              يوتيوب
-            </a>
-            <a
-              href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
-              target="_blank"
-              rel="noreferrer"
-            >
-              تيك توك
-            </a>
-            <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
-              واتساب
-            </a>
-          </div>
-        </section>
-
-        <section id="latest" className="section">
-          <div className="section-head">
-            <h2>آخر الأخبار</h2>
-          </div>
-
+        <div className="news-stack">
           {articles.length > 0 ? (
-            <div className="grid">
-              {articles.map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
+            articles.map((article) => <ArticleCard key={article.id} article={article} />)
           ) : (
-            <div className="empty-state">
-              <h3>لا توجد أخبار منشورة بعد</h3>
-              <p>ستظهر الأخبار هنا تلقائيًا بعد نشرها من لوحة التحكم.</p>
-            </div>
+            <article className="newsletter-card fade-in">
+              <div className="newsletter-card__header">
+                <div>
+                  <div className="author-row">
+                    <h3>إدارة التحرير</h3>
+                    <span className="verified-badge">✓</span>
+                  </div>
+                  <small>@SyriaFreeNews</small>
+                </div>
+                <time>الآن</time>
+              </div>
+              <p>لا توجد أخبار منشورة بعد. ستظهر الأخبار هنا تلقائيًا بعد نشرها من لوحة التحكم.</p>
+            </article>
           )}
-        </section>
+        </div>
       </main>
+
+      <footer id="platforms" className="site-footer">
+        <div className="container footer-inner">
+          <div className="footer-social-box">
+            <h3>⭐ لمتابعتنا عبر حساباتنا الرسمية على مواقع التواصل الاجتماعي</h3>
+            <div className="social-links social-links--footer">
+              <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
+                <span>تليجرام</span>
+              </a>
+              <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
+                <span>فيسبوك</span>
+              </a>
+              <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
+                <span>إكس</span>
+              </a>
+              <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
+                <span>يوتيوب</span>
+              </a>
+              <a
+                href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>تيك توك</span>
+              </a>
+              <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
+                <span>واتساب</span>
+              </a>
+            </div>
+          </div>
+          <p>© 2026 شبكة أخبار سوريا الحرة. جميع الحقوق محفوظة.</p>
+        </div>
+      </footer>
     </>
   );
 }
