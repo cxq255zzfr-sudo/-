@@ -8,8 +8,8 @@ function isValidArticle(article: any) {
   if (!article) return false;
 
   const title = typeof article.title === 'string' ? article.title.trim() : '';
-  const excerpt = typeof article.excerpt === 'string' ? article.excerpt.trim() : '';
   const slug = typeof article.slug === 'string' ? article.slug.trim() : '';
+  const excerpt = typeof article.excerpt === 'string' ? article.excerpt.trim() : '';
 
   if (!title || !slug) return false;
 
@@ -40,30 +40,65 @@ export default async function HomePage() {
       <main className="container">
         <section className="hero">
           <div className="hero-card">
-            <h2>{featured?.title ?? 'شبكة أخبار سوريا الحرة'}</h2>
-            <p>
-              هذه هي الواجهة العامة للموقع. يمكن من خلالها عرض الأخبار المنشورة، بينما تبقى لوحة
-              التحكم مخصصة للإدارة فقط.
-            </p>
+            <div className="hero-copy">
+              <span className="section-kicker">شبكة أخبار سوريا الحرة</span>
+              <h2>{featured?.title ?? 'آخر الأخبار والتغطيات الموثوقة'}</h2>
 
-            <div className="hero-actions">
-              {featured?.slug ? (
-                <a className="button" href={`/news/${featured.slug}`}>
-                  قراءة الخبر المميز
+              {featured?.excerpt ? (
+                <p>{featured.excerpt}</p>
+              ) : (
+                <p>تغطية إخبارية حديثة مع عرض منظم للأخبار المنشورة.</p>
+              )}
+
+              <div className="hero-actions">
+                {featured?.slug ? (
+                  <a className="button" href={`/news/${featured.slug}`}>
+                    قراءة الخبر
+                  </a>
+                ) : null}
+
+                <a className="button secondary" href="#latest">
+                  تصفح آخر الأخبار
                 </a>
-              ) : null}
-
-              <a className="button secondary" href="#latest">
-                الانتقال إلى آخر الأخبار
-              </a>
+              </div>
             </div>
+          </div>
+        </section>
+
+        <section id="platforms" className="section platforms-section">
+          <div className="section-head">
+            <h2>منصاتنا الرسمية</h2>
+          </div>
+
+          <div className="platform-links">
+            <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
+              تليجرام
+            </a>
+            <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
+              فيسبوك
+            </a>
+            <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
+              إكس
+            </a>
+            <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
+              يوتيوب
+            </a>
+            <a
+              href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
+              target="_blank"
+              rel="noreferrer"
+            >
+              تيك توك
+            </a>
+            <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
+              واتساب
+            </a>
           </div>
         </section>
 
         <section id="latest" className="section">
           <div className="section-head">
             <h2>آخر الأخبار</h2>
-            <p>جميع الأخبار المنشورة تظهر هنا تلقائيًا.</p>
           </div>
 
           {articles.length > 0 ? (
@@ -74,8 +109,8 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="empty-state">
-              <h3>لا توجد أخبار صالحة للعرض الآن</h3>
-              <p>أضف خبرًا جديدًا من لوحة التحكم، ثم انشره ليظهر هنا.</p>
+              <h3>لا توجد أخبار منشورة بعد</h3>
+              <p>ستظهر الأخبار هنا تلقائيًا بعد نشرها من لوحة التحكم.</p>
             </div>
           )}
         </section>
