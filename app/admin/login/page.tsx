@@ -2,12 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { loginAction } from '../actions';
 
-export default function AdminLoginPage({
+export default async function AdminLoginPage({
   searchParams
 }: {
-  searchParams?: { error?: string };
+  searchParams?: Promise<{ error?: string }>;
 }) {
-  const hasError = searchParams?.error === '1';
+  const params = await searchParams;
+  const hasError = params?.error === '1';
 
   return (
     <main className="admin-login-page">
