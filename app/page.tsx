@@ -15,54 +15,85 @@ function isValidArticle(article: any) {
 
   const badText = `${title} ${excerpt}`.toLowerCase();
 
-  return !(
+  if (
     badText.includes('application error') ||
     badText.includes('client-side exception') ||
     badText.includes('server-side exception') ||
     badText.includes('اسم المستخدم') ||
-    badText.includes('كلمة المرور') ||
-    badText.includes('login') ||
-    badText.includes('admin')
-  );
+    badText.includes('كلمة المرور')
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 export default async function HomePage() {
   const rawArticles = await getPublishedArticles();
   const articles = rawArticles.filter(isValidArticle);
-  const featured = articles.find((article) => article.is_featured) ?? articles[0];
 
   return (
     <>
       <SiteHeader />
 
-      <main className="container">
-        <section className="hero">
-          <div className="hero-card">
-            <h2>{featured?.title ?? 'شبكة أخبار سوريا الحرة'}</h2>
-            <p>
-              {featured?.excerpt ||
-                'تغطية إخبارية شاملة لأحدث التطورات والأخبار، مع عرض منظم وواضح للمحتوى المنشور.'}
-            </p>
-          </div>
-        </section>
+      <main className="container section-space">
+        <div id="latest" className="section-title">
+          <h2>آخر الأخبار</h2>
+          <div className="section-line" />
+        </div>
 
-        <section id="latest">
-          <h2 className="section-title">آخر الأخبار</h2>
-          <div className="grid">
-            {articles.length > 0 ? (
-              articles.map((article) => <ArticleCard key={article.id} article={article} />)
-            ) : (
-              <div className="panel">
-                <h3>لا توجد أخبار منشورة بعد</h3>
-                <p className="note">ستظهر الأخبار هنا تلقائيًا بعد النشر من لوحة التحكم.</p>
+        <div className="news-stack">
+          {articles.length > 0 ? (
+            articles.map((article) => <ArticleCard key={article.id} article={article} />)
+          ) : (
+            <article className="newsletter-card fade-in">
+              <div className="newsletter-card__header">
+                <div>
+                  <div className="author-row">
+                    <h3>إدارة التحرير</h3>
+                    <span className="verified-badge">✓</span>
+                  </div>
+                  <small>@SyriaFreeNews</small>
+                </div>
+                <time>الآن</time>
               </div>
-            )}
-          </div>
-        </section>
+              <p>لا توجد أخبار منشورة بعد. ستظهر الأخبار هنا تلقائيًا بعد نشرها من لوحة التحكم.</p>
+            </article>
+          )}
+        </div>
       </main>
 
-      <footer className="footer container">
-        © 2026 شبكة أخبار سوريا الحرة
+      <footer id="platforms" className="site-footer">
+        <div className="container footer-inner">
+          <div className="footer-social-box">
+            <h3>⭐ لمتابعتنا عبر حساباتنا الرسمية على مواقع التواصل الاجتماعي</h3>
+            <div className="social-links social-links--footer">
+              <a href="http://telegram.me/ALMHARAR" target="_blank" rel="noreferrer">
+                <span>تليجرام</span>
+              </a>
+              <a href="https://www.facebook.com/networkmoharar" target="_blank" rel="noreferrer">
+                <span>فيسبوك</span>
+              </a>
+              <a href="https://twitter.com/networkmoharar" target="_blank" rel="noreferrer">
+                <span>إكس</span>
+              </a>
+              <a href="https://youtube.com/channel/UCFm-Fy_6kb9F-al0F53LjHQ" target="_blank" rel="noreferrer">
+                <span>يوتيوب</span>
+              </a>
+              <a
+                href="https://www.tiktok.com/@abomahmudalhalaby?_t=8r0L1CRiCLw&_r=1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>تيك توك</span>
+              </a>
+              <a href="https://whatsapp.com/channel/0029Va9oCqMBadmbK22OTv3F" target="_blank" rel="noreferrer">
+                <span>واتساب</span>
+              </a>
+            </div>
+          </div>
+          <p>© 2026 شبكة أخبار سوريا الحرة. جميع الحقوق محفوظة.</p>
+        </div>
       </footer>
     </>
   );
