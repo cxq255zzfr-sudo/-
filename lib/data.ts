@@ -28,6 +28,16 @@ export async function getPublishedArticles(): Promise<Article[]> {
   return (data ?? []) as Article[];
 }
 
+export async function getAllArticles(): Promise<Article[]> {
+  const { data, error } = await supabaseAdmin
+    .from(TABLE)
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return (data ?? []) as Article[];
+}
+
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   if (!slug) return null;
 
