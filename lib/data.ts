@@ -6,6 +6,7 @@ export type Article = {
   title: string;
   slug: string;
   excerpt: string | null;
+  image_url: string | null;
   body: string | null;
   source_url: string | null;
   channel_username: string | null;
