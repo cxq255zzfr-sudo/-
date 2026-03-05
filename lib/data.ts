@@ -39,3 +39,16 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   if (error) return null;
   return (data ?? null) as Article | null;
 }
+
+export async function getArticleById(id: string): Promise<Article | null> {
+  if (!id) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from(TABLE)
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) return null;
+  return (data ?? null) as Article | null;
+}
