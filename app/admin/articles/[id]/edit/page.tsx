@@ -24,25 +24,31 @@ export default async function EditArticlePage({
           <h2>تعديل الخبر</h2>
           <Link href="/admin" className="button secondary">العودة للوحة</Link>
         </div>
+
         {query.error ? <div className="error">{decodeURIComponent(query.error)}</div> : null}
+
         <form action={updateArticleAction} className="form-grid" style={{ marginTop: 18 }}>
           <input type="hidden" name="id" value={article.id} />
           <input type="hidden" name="current_image" value={article.image_url ?? ''} />
+
           <label>
             عنوان الخبر
-            <input name="title" defaultValue={article.title} required />
+            <input name="title" defaultValue={article.title ?? ''} required />
           </label>
+
           <label>
             ملخص قصير
-            <textarea name="excerpt" defaultValue={article.excerpt} required />
+            <textarea name="excerpt" defaultValue={article.excerpt ?? ''} required />
           </label>
+
           <label>
             نص الخبر
-            <textarea name="body" defaultValue={article.body} required style={{ minHeight: 260 }} />
+            <textarea name="body" defaultValue={article.body ?? ''} required style={{ minHeight: 260 }} />
           </label>
+
           <label>
             التصنيف
-            <select name="category" defaultValue={article.category}>
+            <select name="category" defaultValue={article.category ?? 'محلي'}>
               <option>محلي</option>
               <option>سياسي</option>
               <option>أمني</option>
@@ -51,12 +57,15 @@ export default async function EditArticlePage({
               <option>تقني</option>
             </select>
           </label>
+
           <label>
             استبدال صورة الخبر
             <input type="file" name="image" accept="image/*" />
           </label>
-          <label><input type="checkbox" name="is_featured" defaultChecked={article.is_featured} /> خبر مميز</label>
-          <label><input type="checkbox" name="is_published" defaultChecked={article.is_published} /> منشور</label>
+
+          <label><input type="checkbox" name="is_featured" defaultChecked={Boolean(article.is_featured)} /> خبر مميز</label>
+          <label><input type="checkbox" name="is_published" defaultChecked={Boolean(article.is_published)} /> منشور</label>
+
           <button type="submit">حفظ التعديلات</button>
         </form>
       </div>
